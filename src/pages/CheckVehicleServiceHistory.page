@@ -1,0 +1,302 @@
+<!-- *****************************************************************************
+ *** CheckVehicleServiceHistory Visualforce Page
+ *** Display Service TSA, History and Booking history for vehicle
+ *** @Since: 18/02/2019
+ *** Copyright: SqwarePeg
+ ***************************************************************************** -->
+
+<apex:page id="CheckVehicleServiceHistory" StandardController="Vehicle__c" showHeader="false" sideBar="false"
+           extensions="VehicleServiceHistoryController">
+    <style type="text/css">
+        .btn {
+            padding: 5px;
+            width: 50px;
+        }
+        body .bPageBlock .pbBody .pbSubheader{
+                border-width: 2px 0 0;
+                border-style: solid;
+                color: #27282e;
+                padding: 4px 3px;
+                border-color: #F0F0F0;
+                font-size: 10px;
+        }
+        body .bPageBlock .pbBody .grey .pbSubheader{
+            background-color:#FFFFFF;
+            border-color: transparent;
+            font-size: 10px;
+        }
+        .nm-button {
+            -webkit-appearance: button;
+            padding-top: 4px;
+            padding-right: 3px;
+            padding-bottom: 4px;
+            padding-left: 3px;
+            color: #333;
+            border-top-color: rgb(181, 181, 181);
+            border-top-style: solid;
+            border-top-width: 1px;
+            border-right-color: rgb(181, 181, 181);
+            border-right-style: solid;
+            border-right-width: 1px;
+            border-bottom-color: #7f7f7f;
+            border-bottom-style: solid;
+            border-bottom-width: 1px;
+            border-left-color: rgb(181, 181, 181);
+            border-left-style: solid;
+            border-left-width: 1px;
+            border-top-left-radius: 3px;
+            border-top-right-radius: 3px;
+            border-bottom-right-radius: 3px;
+            border-bottom-left-radius: 3px;
+            font-weight: bold;
+            font-size: .9em;
+        }
+
+        body .pbBody table.list tr.headerRow .actionColumn {
+            padding-bottom: 3px;
+        }
+
+        body .pbBody table.list tr.headerRow th {
+            background: #f2f3f3;
+            border-width: 0 0 1px 1px;
+            border-color: #e0e3e5;
+            color: #000;
+            font-size: .9em;
+            font-weight: bold;
+            padding: 5px 2px 4px 5px;
+        }
+
+        .apexp .detailList .list .headerRow th {
+            border-bottom: 2px #ccc;
+            white-space: nowrap;
+        }
+
+        .bPageBlock .detailList .data2Col {
+            border-bottom: 1px #e0e3e5;
+            white-space: nowrap;
+            background: #FFFFFF;
+            border-width: 0 0 1px 1px;
+            border-color: #e0e3e5;
+            color: #000;
+        }
+
+
+    </style>
+    <script type="text/javascript">
+
+        function HideButton(){
+            var obj= document.getElementById('cmdsh');
+            obj.style.visibility = 'hidden';
+        }
+
+
+    </script>
+
+    <apex:form id="TheForm">
+        <apex:outputPanel id="SHPanel">
+            <apex:outputPanel rendered="{!showTSA}">
+                <apex:pageMessages/>
+                <apex:pageBlock id="block1" mode="maindetail">
+
+                    <apex:repeat value="{!repairOrderBookings}" var="rob">
+                        <script> twistSection(document.getElementById('img_{!$Component.sectionmain}')); </script>
+
+                        <apex:outputPanel styleClass="red" layout="block">
+                            <apex:pageBlockSection id="sectionmain" columns="2" dir="right"
+                                                   title="Repair Order # {!rob.repairOrderNumber} ">
+                                <apex:pageBlockSectionItem>
+                                    <apex:outputText style="float:right;" value="Repair Order Number"/>
+                                    <apex:outputText value="{!rob.repairOrderNumber}"/>
+                                </apex:pageBlockSectionItem>
+                                <apex:pageBlockSectionItem>
+                                    <apex:outputText style="float:right;" value="Booking Created"/>
+                                    <apex:outputText value="{0,date,yyyy.MM.dd  HH:mm:ss a}">
+                                        <apex:param value="{!rob.bookingCreatedDateTime}"/>
+                                    </apex:outputText>
+                                </apex:pageBlockSectionItem>
+                                <apex:pageBlockSectionItem>
+                                    <apex:outputText style="float:right;" value="Planned Drop Off"/>
+                                    <apex:outputText value="{0,date,yyyy.MM.dd  HH:mm:ss a}">
+                                        <apex:param value="{!rob.dropOffPlannedDateTime}"/>
+                                    </apex:outputText>
+                                </apex:pageBlockSectionItem>
+                                <apex:pageBlockSectionItem>
+                                    <apex:outputText style="float:right;" value="Planned Pickup"/>
+                                    <apex:outputText value="{0,date,yyyy.MM.dd  HH:mm:ss a}">
+                                        <apex:param value="{!rob.pickupPlannedDateTime}"/>
+                                    </apex:outputText>
+
+                                </apex:pageBlockSectionItem>
+
+
+                                <!--  <apex:pageBlockSectionItem> -->
+                                <apex:outputPanel styleClass="grey" layout="block">
+                                    <script> twistSection(document.getElementById('img_{!$Component.section3}'));
+                                    </script>
+                                    <apex:pageBlockSection title="Guest Details" id="section3" columns="2">
+                                        <!--Guest details list-->
+                                        <apex:repeat value="{!rob.contacts}" var="guest">
+                                            <apex:pageBlockSectionItem>
+                                                <apex:outputText style="float:right;" value="First Name"/>
+                                                <apex:outputText value="{!guest.firstName}"/>
+                                            </apex:pageBlockSectionItem>
+                                            <apex:pageBlockSectionItem>
+                                                <apex:outputText style="float:right;" value="Last Name"/>
+                                                <apex:outputText value="{!guest.lastName}"/>
+                                            </apex:pageBlockSectionItem>
+                                            <apex:pageBlockSectionItem>
+                                                <apex:outputText style="float:right;" value="Email"/>
+                                                <apex:outputText value="{!guest.email}"/>
+                                            </apex:pageBlockSectionItem>
+                                            <apex:pageBlockSectionItem>
+                                                <apex:outputText style="float:right;" value="Mobile"/>
+                                                <apex:outputText value="{!guest.mobileNumber}"/>
+                                            </apex:pageBlockSectionItem>
+
+                                            <apex:pageBlockSectionItem>
+                                                <apex:outputText style="float:right;" value="Business Phone"/>
+                                                <apex:outputText value="{!guest.businessPhone}"/>
+                                            </apex:pageBlockSectionItem>
+
+                                            <apex:pageBlockSectionItem>
+                                                <apex:outputText style="float:right;" value="Home Phone"/>
+                                                <apex:outputText value="{!guest.homePhone}"/>
+                                            </apex:pageBlockSectionItem>
+
+                                            <apex:pageBlockSectionItem>
+                                                <apex:outputText style="float:right;" value="Relationship"/>
+                                                <apex:outputText value="{!guest.relationship}"/>
+                                            </apex:pageBlockSectionItem>
+
+                                            <apex:pageBlockSectionItem>
+                                                <apex:outputText style="float:right;" value="DMS Custody Id"/>
+                                                <apex:outputText value="{!guest.dmsCustId}"/>
+                                            </apex:pageBlockSectionItem>
+
+                                            <!--address details-->
+
+                                                <apex:pageBlockSectionItem>
+                                                    <apex:outputText style="float:right;" value="Street 1"/>
+                                                    <apex:outputText value="{!guest.address.street1}"/>
+                                                </apex:pageBlockSectionItem>
+                                                <apex:pageBlockSectionItem>
+                                                    <apex:outputText style="float:right;" value="Street 2"/>
+                                                    <apex:outputText value="{!guest.address.street2}"/>
+                                                </apex:pageBlockSectionItem>
+                                                <apex:pageBlockSectionItem>
+                                                    <apex:outputText style="float:right;" value="Suburb"/>
+                                                    <apex:outputText value="{!guest.address.suburb}"/>
+                                                </apex:pageBlockSectionItem>
+                                                <apex:pageBlockSectionItem>
+                                                    <apex:outputText style="float:right;" value="State"/>
+                                                    <apex:outputText value="{!guest.address.state}"/>
+                                                </apex:pageBlockSectionItem>
+                                                <apex:pageBlockSectionItem>
+                                                    <apex:outputText style="float:right;" value="Postcode"/>
+                                                    <apex:outputText value="{!guest.address.postcode}"/>
+                                                </apex:pageBlockSectionItem>
+
+
+                                        </apex:repeat>
+                                    </apex:pageBlockSection>
+                                </apex:outputPanel>
+
+                                <apex:pageBlockSection id="section4" columns="1">
+                                    <!--  <apex:pageBlockSectionItem> -->
+                                    <apex:outputPanel styleClass="grey" layout="block">
+                                        <script> twistSection(document.getElementById('img_{!$Component.bookingSection}'));
+                                        </script>
+                                        <apex:pageBlockSection title="Booking details" columns="1" id="bookingSection">
+                                            <apex:pageBlockTable value="{!rob.jobs}" var="job"
+                                                                 id="lineItems" width="100%" align="center">
+                                                <apex:column value="{!job.key}" headerValue="Key"
+                                                             style="border-bottom:0.8px solid #E8E8E8"/>
+                                                <apex:column value="{!job.section}" headerValue="Item"
+                                                             style="border-bottom:0.8px solid #E8E8E8"/>
+                                                <apex:column value="{!job.description}" headerValue="Description"
+                                                             style="border-bottom:0.8px solid #E8E8E8"/>
+                                                <apex:column value="{!job.action}" headerValue="Action"
+                                                             style="border-bottom:0.8px solid #E8E8E8"/>
+                                            </apex:pageBlockTable>
+                                        </apex:pageBlockSection>
+                                    </apex:outputPanel>
+
+                                </apex:pageBlockSection>
+
+
+                            </apex:pageBlockSection>
+
+                        </apex:outputPanel>
+
+                    </apex:repeat>
+
+
+                    <apex:repeat value="{!wrapper.operations}" var="operation">
+                        <script> twistSection(document.getElementById('img_{!$Component.sectionmain}')); </script>
+
+                        <apex:variable value="{!operation.months}" var="num1"/>
+
+                        <apex:pageBlockSection id="sectionmain" columns="1" dir="right" title="Service # {!operation.serviceNumber} -  {! DATE( YEAR( RDR_Date ) + FLOOR( ( MONTH ( RDR_Date ) + VALUE(num1) - 1 ) / 12 ), MOD( MONTH ( RDR_Date ) + VALUE(num1) - 1 + IF( DAY ( RDR_Date ) > CASE( MOD( MONTH( RDR_Date ) + VALUE(num1) - 1, 12 ) + 1, 2, 28, 4, 30, 6, 30, 9, 30, 11, 30, 31 ), 1, 0 ), 12 ) + 1,
+            IF( DAY( RDR_Date ) > CASE( MOD( MONTH( RDR_Date ) + VALUE(num1) - 1, 12 ) + 1, 2, 28, 4, 30, 6, 30, 9, 30, 11, 30, 31 ), 1, DAY( RDR_Date )))} ">
+                            <apex:outputPanel layout="block">
+                                <apex:pageBlockSection>
+                                    <apex:pageBlockSectionItem>
+                                        <apex:outputText style="float:right;" value="Operation"/>
+                                        <apex:outputText value="{!operation.operation}"/>
+                                    </apex:pageBlockSectionItem>
+                                    <apex:pageBlockSectionItem>
+                                        <apex:outputText style="float:right;" value="Kilometres"/>
+                                        <apex:outputText value="{!operation.kilometres}"/>
+                                    </apex:pageBlockSectionItem>
+                                    <apex:pageBlockSectionItem>
+                                        <apex:outputText style="float:right;" value="Service Cost"/>
+                                        <apex:outputText value="{!operation.tsaServiceCostIncGST}"/>
+                                    </apex:pageBlockSectionItem>
+                                    <apex:pageBlockSectionItem>
+                                        <apex:outputText style="float:right;" value="Actual Service Price"/>
+                                        <apex:outputText value="{!operation.retailServiceCostIncGST}"/>
+                                    </apex:pageBlockSectionItem>
+                                    <apex:pageBlockSectionItem>
+                                        <apex:outputText style="float:right;" value="Estimated Service Time"/>
+                                        <apex:outputText value="{!operation.estimatedServiceTime}"/>
+                                    </apex:pageBlockSectionItem>
+
+                                </apex:pageBlockSection>
+
+                                <apex:pageBlockSection id="section4" columns="1">
+                                    <!--  <apex:pageBlockSectionItem> -->
+                                    <apex:outputPanel styleClass="grey" layout="block">
+                                        <script> twistSection(document.getElementById('img_{!$Component.section3}'));
+                                        </script>
+                                        <apex:pageBlockSection title="Service Items" columns="1" id="section3">
+                                            <apex:pageBlockTable value="{!operation.serviceKeys}" var="item"
+                                                                 id="lineItems" width="100%" align="center">
+                                                <apex:column value="{!item.key}" headerValue="Key"
+                                                             style="border-bottom:0.8px solid #E8E8E8"/>
+                                                <apex:column value="{!item.section}" headerValue="Item"
+                                                             style="border-bottom:0.8px solid #E8E8E8"/>
+                                                <apex:column value="{!item.description}" headerValue="Description"
+                                                             style="border-bottom:0.8px solid #E8E8E8"/>
+                                                <apex:column value="{!item.action}" headerValue="Action"
+                                                             style="border-bottom:0.8px solid #E8E8E8"/>
+                                            </apex:pageBlockTable>
+                                        </apex:pageBlockSection>
+                                    </apex:outputPanel>
+
+                                </apex:pageBlockSection>
+                            </apex:outputPanel>
+                        </apex:pageBlockSection>
+                    </apex:repeat>
+
+                </apex:pageBlock>
+            </apex:outputPanel>
+        </apex:outputPanel>
+        <apex:actionFunction name="RunSave" action="{!SHowTSAService}" reRender="SHPanel"
+                             oncomplete="RedirectOnSuccess('Lookup Vehicle Service History');"
+                             status="otherSaveStatus"/>
+
+        <input type="button" id="cmdsh" value="Lookup Vehicle Service History" onclick="HideButton();RunSave();"
+               align="center" class="nm-button"/>
+
+    </apex:form>
+</apex:page>
