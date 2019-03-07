@@ -81,9 +81,9 @@
         }
 
 
+
     </style>
     <script type="text/javascript">
-
         function HideButton(){
             var obj= document.getElementById('cmdsh');
             obj.style.visibility = 'hidden';
@@ -92,136 +92,41 @@
 
     </script>
 
-    <apex:form id="TheForm">
-        <apex:outputPanel id="SHPanel">
+    <apex:form id="TheForm" >
+        <apex:outputPanel id="SHPanel" >
             <apex:outputPanel rendered="{!showTSA}">
-                <apex:pageMessages/>
+                <apex:pageMessages />
                 <apex:pageBlock id="block1" mode="maindetail">
 
-                    <apex:repeat value="{!repairOrderBookings}" var="rob">
-                        <script> twistSection(document.getElementById('img_{!$Component.repairOrderSection}')); </script>
-
-                        <apex:pageBlockSection id="container-pbs" columns="1" dir="right" >
-                            <apex:pageBlockSection id="repairOrderSection" columns="2" dir="right"
-                                                   title="Repair Order # {!rob.repairOrderNumber} ">
-                                <apex:pageBlockSectionItem>
-                                    <apex:outputText style="float:right;" value="Repair Order Number"/>
-                                    <apex:outputText value="{!rob.repairOrderNumber}"/>
-                                </apex:pageBlockSectionItem>
-                                <apex:pageBlockSectionItem>
-                                    <apex:outputText style="float:right;" value="Booking Created"/>
-                                    <apex:outputText value="{0,date,yyyy.MM.dd  HH:mm:ss a}">
-                                        <apex:param value="{!rob.bookingCreatedDateTime}"/>
-                                    </apex:outputText>
-                                </apex:pageBlockSectionItem>
-                                <apex:pageBlockSectionItem>
-                                    <apex:outputText style="float:right;" value="Planned Drop Off"/>
-                                    <apex:outputText value="{0,date,yyyy.MM.dd  HH:mm:ss a}">
-                                        <apex:param value="{!rob.dropOffPlannedDateTime}"/>
-                                    </apex:outputText>
-                                </apex:pageBlockSectionItem>
-                                <apex:pageBlockSectionItem>
-                                    <apex:outputText style="float:right;" value="Planned Pickup"/>
-                                    <apex:outputText value="{0,date,yyyy.MM.dd  HH:mm:ss a}">
-                                        <apex:param value="{!rob.pickupPlannedDateTime}"/>
-                                    </apex:outputText>
-
-                                </apex:pageBlockSectionItem>
-
-
-
-                                    <!--  <apex:pageBlockSectionItem> -->
-                                    <apex:outputPanel styleClass="grey" layout="block">
-                                        <script> twistSection(document.getElementById('img_{!$Component.bookingSection}'));
-                                        </script>
-                                        <apex:pageBlockSection id="bookingDetails" columns="2" dir="right"
-                                                               title="Job Details ">
-                                            <!--<apex:pageBlockSectionItem>-->
-                                                <!--<apex:outputText style="float:right;" value="Date"/>-->
-                                                <!--<apex:outputText value="{0,date,yyyy.MM.dd  HH:mm:ss a}">-->
-                                                    <!--<apex:param value="{!rob.bookingCreatedDateTime}"/>-->
-                                                <!--</apex:outputText>-->
-                                            <!--</apex:pageBlockSectionItem>-->
-
-                                            <!--<apex:pageBlockSectionItem>-->
-                                                <!--<apex:outputText style="float:right;" value="Dealer Name"/>-->
-                                                <!--<apex:outputText value="{!rob.location.dealerName}"></apex:outputText>-->
-                                            <!--</apex:pageBlockSectionItem>-->
-
-                                            <!--<apex:pageBlockSectionItem>-->
-                                                <!--<apex:outputText style="float:right;" value="Job Description"/>-->
-                                                <!--<apex:outputText value="{!job.serviceOperation.description}"/>-->
-                                            <!--</apex:pageBlockSectionItem>-->
-
-
-                                            <!--<apex:pageBlockSectionItem>-->
-                                                <!--<apex:outputText style="float:right;" value="Mileage"/>-->
-                                                <!--<apex:outputText value="{!rob.vehicle.mileage}"></apex:outputText>-->
-                                            <!--</apex:pageBlockSectionItem>-->
-
-                                            <apex:pageBlockTable value="{!rob.jobs}" var="job"
-                                                                 id="lineItems" width="100%" align="center">
-                                                <apex:column value="{!job.jobNumber}" headerValue="Job Number"
-                                                             style="border-bottom:0.8px solid #E8E8E8"/>
-                                                <apex:column value="{!rob.bookingCreatedDateTime}" headerValue="Booking Date"
-                                                             style="border-bottom:0.8px solid #E8E8E8"/>
-                                                <apex:column value="{!rob.location.dealerName}" headerValue="Dealer Name"
-                                                             style="border-bottom:0.8px solid #E8E8E8"/>
-                                                <apex:column value="{!rob.vehicle.mileage}" headerValue="Mileage"
-                                                             style="border-bottom:0.8px solid #E8E8E8"/>
-                                            </apex:pageBlockTable>
-
-
-
-                                        </apex:pageBlockSection>
-                                    </apex:outputPanel>
-
-
-
-
-                            </apex:pageBlockSection>
-
-
-                        </apex:pageBlockSection>
-
-
-
-                        <apex:outputPanel styleClass="red" layout="block">
-
-
-                        </apex:outputPanel>
-
-                    </apex:repeat>
-
-
-                    <apex:repeat value="{!wrapper.operations}" var="operation">
+                    <apex:repeat value="{!repairOrderBookings}" var="rob" >
                         <script> twistSection(document.getElementById('img_{!$Component.sectionmain}')); </script>
 
-                        <apex:variable value="{!operation.months}" var="num1"/>
+                        <apex:variable value="{!rob.repairOrderNumber}" var="num1"/>
 
-                        <apex:pageBlockSection id="sectionmain" columns="1" dir="right" title="Service # {!operation.serviceNumber} -  {! DATE( YEAR( RDR_Date ) + FLOOR( ( MONTH ( RDR_Date ) + VALUE(num1) - 1 ) / 12 ), MOD( MONTH ( RDR_Date ) + VALUE(num1) - 1 + IF( DAY ( RDR_Date ) > CASE( MOD( MONTH( RDR_Date ) + VALUE(num1) - 1, 12 ) + 1, 2, 28, 4, 30, 6, 30, 9, 30, 11, 30, 31 ), 1, 0 ), 12 ) + 1,
-            IF( DAY( RDR_Date ) > CASE( MOD( MONTH( RDR_Date ) + VALUE(num1) - 1, 12 ) + 1, 2, 28, 4, 30, 6, 30, 9, 30, 11, 30, 31 ), 1, DAY( RDR_Date )))} ">
+                        <apex:pageBlockSection id="sectionmain" columns="1" dir="right"  title="Repair Order # {!rob.repairOrderNumber}">
                             <apex:outputPanel layout="block">
-                                <apex:pageBlockSection>
-                                    <apex:pageBlockSectionItem>
-                                        <apex:outputText style="float:right;" value="Operation"/>
-                                        <apex:outputText value="{!operation.operation}"/>
+                                <apex:pageBlockSection >
+                                    <apex:pageBlockSectionItem >
+                                        <apex:outputText style="float:right;" value="Repair Order Number" />
+                                        <apex:outputText value="{!rob.repairOrderNumber}"/>
                                     </apex:pageBlockSectionItem>
-                                    <apex:pageBlockSectionItem>
-                                        <apex:outputText style="float:right;" value="Kilometres"/>
-                                        <apex:outputText value="{!operation.kilometres}"/>
+                                    <apex:pageBlockSectionItem >
+                                        <apex:outputText style="float:right;" value="Booking Date" />
+                                        <apex:outputText value="{!rob.bookingCreatedDateTime}" />
                                     </apex:pageBlockSectionItem>
-                                    <apex:pageBlockSectionItem>
-                                        <apex:outputText style="float:right;" value="Service Cost"/>
-                                        <apex:outputText value="{!operation.tsaServiceCostIncGST}"/>
+                                    <apex:pageBlockSectionItem >
+                                        <apex:outputText style="float:right;" value="Planned drop off" />
+                                        <apex:outputText value="{!rob.dropOffPlannedDateTime}" />
                                     </apex:pageBlockSectionItem>
-                                    <apex:pageBlockSectionItem>
-                                        <apex:outputText style="float:right;" value="Actual Service Price"/>
-                                        <apex:outputText value="{!operation.retailServiceCostIncGST}"/>
+                                    <apex:pageBlockSectionItem >
+                                        <apex:outputText style="float:right;" value="Actual Service Price" />
+                                        <apex:outputText value="{!rob.pickupPlannedDateTime}" />
                                     </apex:pageBlockSectionItem>
-                                    <apex:pageBlockSectionItem>
-                                        <apex:outputText style="float:right;" value="Estimated Service Time"/>
-                                        <apex:outputText value="{!operation.estimatedServiceTime}"/>
+                                    <apex:pageBlockSectionItem >
+                                        <apex:outputText style="float:right;" value="Estimated Service Time" />
+                                        <apex:outputText value="test" />
+                                    </apex:pageBlockSectionItem>
+                                    <apex:pageBlockSectionItem >
                                     </apex:pageBlockSectionItem>
 
                                 </apex:pageBlockSection>
@@ -229,19 +134,34 @@
                                 <apex:pageBlockSection id="section4" columns="1">
                                     <!--  <apex:pageBlockSectionItem> -->
                                     <apex:outputPanel styleClass="grey" layout="block">
-                                        <script> twistSection(document.getElementById('img_{!$Component.section3}'));
-                                        </script>
-                                        <apex:pageBlockSection title="Service Items" columns="1" id="section3">
-                                            <apex:pageBlockTable value="{!operation.serviceKeys}" var="item"
-                                                                 id="lineItems" width="100%" align="center">
-                                                <apex:column value="{!item.key}" headerValue="Key"
+                                        <script> twistSection(document.getElementById('img_{!$Component.section3}')); </script>
+                                        <apex:pageBlockSection title="Job Details" columns="1" id="section3">
+                                            <apex:pageBlockTable value="{!rob.jobs}" var="job" id="lineItems" width="100%" align="center">
+                                                <apex:column value="{!job.jobNumber}" headerValue="Job Number"
                                                              style="border-bottom:0.8px solid #E8E8E8"/>
-                                                <apex:column value="{!item.section}" headerValue="Item"
+                                                <apex:column value="{!job.serviceOperation.description}" headerValue="Job Description"
                                                              style="border-bottom:0.8px solid #E8E8E8"/>
-                                                <apex:column value="{!item.description}" headerValue="Description"
+                                                <apex:column value="{!rob.bookingCreatedDateTime}"
+                                                             headerValue="Booking Date"
                                                              style="border-bottom:0.8px solid #E8E8E8"/>
-                                                <apex:column value="{!item.action}" headerValue="Action"
+                                                <apex:column value="{!rob.location.dealerName}" headerValue="Dealer Name"
                                                              style="border-bottom:0.8px solid #E8E8E8"/>
+                                                <apex:column value="{!rob.vehicle.mileage}" headerValue="Mileage"
+                                                             style="border-bottom:0.8px solid #E8E8E8"/>
+                                                <apex:column headerValue="Action"  >
+                                                    <apex:param name="jobId" value="{!job.jobNumber}" assignTo="{!showJobDetails}"/>
+                                                    <apex:commandButton value="View Job Details"> </apex:commandButton>
+                                                </apex:column>
+
+                                                <apex:column breakBefore="true" colspan="2" >
+                                                    <apex:pageblocksection title="Comments" showheader="false" collapsible="true" columns="1">
+                                                        <apex:pageBlockTable value="{!job.comments}" var="c" width="100%">
+                                                            <apex:column value="{!c.body}"/>
+                                                            <apex:column value="{!c.authorRole}"/>
+                                                        </apex:pageBlockTable>
+                                                    </apex:pageblockSection>
+                                                </apex:column>
+
                                             </apex:pageBlockTable>
                                         </apex:pageBlockSection>
                                     </apex:outputPanel>
@@ -262,4 +182,5 @@
                align="center" class="nm-button"/>
 
     </apex:form>
+
 </apex:page>
