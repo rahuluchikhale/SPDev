@@ -1,0 +1,185 @@
+<!-- *****************************************************************************
+ *** CheckVehicleBookingHistory Visualforce Page
+ *** Display Service TSA, History and Booking history for vehicle
+ *** @Since: 18/02/2019
+ *** Copyright: SqwarePeg
+ ***************************************************************************** -->
+
+<apex:page id="CheckVehicleBookingHistory" StandardController="Vehicle__c" showHeader="false" sideBar="false"
+           extensions="VehicleBookingHistoryController">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" />
+    <!--<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css" />-->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+    <style type="text/css">
+        body button, body .x-btn, body .btn, body .btnDisabled, body .btnCancel, body .menuButton .menuButtonButton, label,.bPageBlock .pbBody .pbSubheader, .bPageBlock .labelCol, body .print .topics-label,.card-body,
+        body .bDetailBlock.bPageBlock .pbBody .dataCol, table{
+            font-size: 12px !important;
+        }
+        .h4, h4 {
+            font-size: 1.2rem;
+        }
+        .table-row{
+            cursor:pointer;
+         }
+
+        body .bPageBlock .pbBody .grey .pbSubheader{
+            background-color:#FFFFFF;
+            border-color: transparent;
+        }
+
+    </style>
+    <script type="text/javascript">
+        function HideButton(){
+            var obj= document.getElementById('cmdsh');
+            obj.style.visibility = 'hidden';
+        }
+
+        function doNothing(){
+            return false;
+        }
+    </script>
+
+    <apex:form id="TheForm" >
+        <apex:outputPanel id="SHPanel" >
+            <apex:outputPanel styleClass="grey" rendered="{!showTSA}" >
+                <apex:pageMessages />
+                <apex:pageBlock id="block1" mode="maindetail">
+
+                    <apex:repeat value="{!repairOrderBookings}" var="rob" >
+                        <script> twistSection(document.getElementById('img_{!$Component.sectionmain}')); </script>
+
+                        <apex:variable value="{!rob.repairOrderNumber}" var="num1"/>
+
+                        <apex:pageBlockSection id="sectionmain" columns="1" dir="right"  title="Repair Order # {!rob.repairOrderNumber}">
+                            <apex:outputPanel layout="block">
+                                <apex:pageBlockSection >
+                                    <apex:pageBlockSectionItem >
+                                        <apex:outputText style="float:right;" value="Repair Order Number" />
+                                        <apex:outputText value="{!rob.repairOrderNumber}"/>
+                                    </apex:pageBlockSectionItem>
+                                    <apex:pageBlockSectionItem >
+                                        <apex:outputText style="float:right;" value="Booking Date" />
+                                        <apex:outputText value="{!rob.bookingCreatedDateTime}" />
+                                    </apex:pageBlockSectionItem>
+                                    <apex:pageBlockSectionItem >
+                                        <apex:outputText style="float:right;" value="Planned drop off" />
+                                        <apex:outputText value="{!rob.dropOffPlannedDateTime}" />
+                                    </apex:pageBlockSectionItem>
+                                    <apex:pageBlockSectionItem >
+                                        <apex:outputText style="float:right;" value="Actual Service Price" />
+                                        <apex:outputText value="{!rob.pickupPlannedDateTime}" />
+                                    </apex:pageBlockSectionItem>
+                                </apex:pageBlockSection>
+
+                                <apex:pageBlockSection id="section4" columns="1">
+                                    <!--  <apex:pageBlockSectionItem> -->
+                                    <apex:outputPanel styleClass="grey" layout="block">
+                                        <h4>Job History</h4>
+                                        <table class="table table-hover">
+                                            <thead>
+                                            <th>Date</th>
+                                            <th>Dealer Name</th>
+                                            <!--<th>Job Number</th>-->
+                                            <th>Description</th>
+                                            <th>Mileage</th>
+                                            <th>Action</th>
+                                            </thead>
+
+                                            <tbody>
+                                            <apex:repeat value="{!rob.jobs}" var="job" >
+
+                                                <tr  data-toggle="collapse" data-target="#accordian" class="clickable panel-title table-row CellWithComment" title="Click to get details" >
+
+                                                    <td>
+                                                        <span data-toggle="tooltip" title="Tooltip Message">{!rob.bookingCreatedDateTime}</span>
+                                                    </td>
+                                                    <td>
+                                                        <span data-toggle="tooltip" title="Tooltip Message"> {!rob.location.dealerName} </span></td>
+                                                    <!--<td>{!job.jobNumber}</td>-->
+                                                    <td>
+                                                        <span data-toggle="tooltip" title="Tooltip Message">{!job.serviceOperation.description}
+                                                        </span>
+                                                    </td>
+                                                    <td>
+                                                        <span data-toggle="tooltip" title="Tooltip Message">
+                                                            {!rob.vehicle.mileage}
+                                                        </span>
+                                                    </td>
+                                                    <td>
+                                                        <span data-toggle="tooltip" title="Tooltip Message">
+                                                            View details
+                                                        </span>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="5">
+                                                        <div id="accordian" class="collapse">
+
+                                                            <!-- Comments -->
+                                                            <h4>Comments</h4>
+
+                                                            <table class="table table-hover table-bordered">
+                                                                <thead>
+                                                                <th>Body</th>
+                                                                <th>Author Role</th>
+                                                                </thead>
+
+                                                                <tbody>
+                                                                <apex:repeat value="{!job.comments}" var="comment" >
+                                                                    <tr>
+                                                                        <td>{!comment.body}</td>
+                                                                        <td>{!comment.authorRole}</td>
+                                                                    </tr>
+
+                                                                </apex:repeat>
+
+                                                                </tbody>
+                                                            </table>
+                                                            <!-- Notes-->
+                                                            <h4>Notes</h4>
+                                                            <table class="table table-hover table-bordered">
+                                                                <thead>
+                                                                <th>Body</th>
+                                                                <th>Author Role</th>
+                                                                </thead>
+                                                                <tbody>
+                                                                <apex:repeat value="{!job.notes}" var="note" >
+
+                                                                    <tr>
+                                                                        <td>{!note.body}</td>
+                                                                        <td>{!note.authorRole}</td>
+                                                                    </tr>
+                                                                </apex:repeat>
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    </td>
+
+
+                                                </tr>
+
+                                            </apex:repeat>
+                                            </tbody>
+                                        </table>
+                                    </apex:outputPanel>
+
+                                </apex:pageBlockSection>
+                            </apex:outputPanel>
+                        </apex:pageBlockSection>
+                    </apex:repeat>
+
+                </apex:pageBlock>
+            </apex:outputPanel>
+        </apex:outputPanel>
+        <apex:actionFunction name="RunSave" action="{!SHowTSAService}" reRender="SHPanel"
+                             oncomplete="RedirectOnSuccess('Lookup Vehicle Booking History');"
+                             status="otherSaveStatus"/>
+
+        <input type="button" id="cmdsh" value="Lookup Vehicle Booking History" onclick="HideButton();RunSave();"
+               align="center" class="nm-button"/>
+
+    </apex:form>
+</apex:page>

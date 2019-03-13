@@ -1,11 +1,8 @@
+/**
+ * Created by rahulchikhale on 2019-03-07.
+ */
 
-/******************************************************************************
- *** Author:        SqwarePeg.com
- *** @Since:        2019-02-26
- *** Description:  Class to get vehicle service history details from boomi endpoint
-  ******************************************************************************/
-public with sharing class VehicleServiceHistoryController {
-// public ApexPages.StandardSetController controller {get; set;}
+public with sharing class VehicleBookingHistoryController {
 
     public  static Vehicle__c vehicle { get; set; }
 
@@ -19,11 +16,15 @@ public with sharing class VehicleServiceHistoryController {
 
     public static date RDR_Date {get; set;}
 
+    /*
+    * VSH
+    *
+    * */
 
-    @TestVisible public static List<RepairOrderHistory> repairOrderHistories {get; set;}
+    @TestVisible public static List<RepairOrderBooking> repairOrderBookings {get; set;}
 
 
-            public VehicleServiceHistoryController(ApexPages.StandardController con) {
+    public VehicleBookingHistoryController(ApexPages.StandardController con) {
 
         showTSA = false ;
         RDR_Date = null ;
@@ -152,12 +153,12 @@ public with sharing class VehicleServiceHistoryController {
     //TO DO: Get rid after api is up
     public static void setROBMock(){
         try{
-            String jsonInputString = '[ { "repairOrderNumber": "RO11122", "workshopEndDateTime": "2019-03-07T23:35:33.253Z", "pickupActualDateTime": "2019-03-07T23:35:33.253Z", "vehicle": { "VIN": "MR0HA3CD300711242", "registration": "1BB9ZZ", "registrationState": "VIC", "mileage": 0 }, "location": { "tmcaDealerCode": "003321", "dealerName": "Acme Toyota", "tmcaBranchCode": "897326", "branchName": "ACME Melbourne Toyota", "department": "Service", "dmsVendor": "Revolution", "dms": "Tune" }, "contacts": [ { "firstName": "John", "lastName": "Guestson", "mobileNumber": "0412356789", "homePhone": "0391234567", "businessPhone": "0398765432", "email": "johnguestson@example.com", "relationship": "owner", "dmsCustId": "1357975", "address": { "street1": "1 High Street", "street2": "string", "suburb": "Prahran", "state": "VIC", "postcode": "3181" } } ], "jobs": [ { "jobNumber": "1", "serviceOperation": { "category": "PM", "serviceType": "VehicleInspection", "codeType": "Infomedia", "code": "CVI", "description": "Carry out complimentary vehicle inspection" }, "sundries": [ { "displayName": "Shop supplies", "quantity": 0 } ], "inclusions": [ { "description": "Reassemble and test", "inclusionNumber": "1" } ], "parts": [ { "partNumber": "99367K1550", "displayName": "Belt, V-Ribbed", "quantity": 0 } ], "comments": [ { "body": "Rattling in engine around 40 kph", "authorRole": "guest" } ], "notes": [ { "body": "Rattling inspected", "authorRole": "serviceAdvisor" } ] } ] } ]';
+            String jsonInputString = '[{ "repairOrderNumber": "RO11122", "bookingCreatedDateTime": "2019-03-03T23:19:59.689Z", "dropOffPlannedDateTime": "2019-03-03T23:19:59.689Z", "pickupPlannedDateTime": "2019-03-03T23:19:59.689Z", "booking": { "bookingReference": "BK9876", "BookingSrc": "Phone", "transportOption": "Stay" }, "vehicle": { "VIN": "MR0HA3CD300711242", "registration": "1BB9ZZ", "registrationState": "VIC", "mileage": 0 }, "location": { "tmcaDealerCode": "003321", "dealerName": "Acme Toyota", "tmcaBranchCode": "897326", "branchName": "ACME Melbourne Toyota", "department": "Service", "dmsVendor": "Revolution", "dms": "Tune" }, "contacts": [ { "firstName": "John", "lastName": "Guestson", "mobileNumber": "0412356789", "homePhone": "0391234567", "businessPhone": "0398765432", "email": "johnguestson@example.com", "relationship": "owner", "dmsCustId": "1357975", "address": { "street1": "1 High Street", "street2": "string", "suburb": "Prahran", "state": "VIC", "postcode": "3181" } } ], "jobs": [ { "jobNumber": "1", "isExpressMaintenance": true, "serviceOperation": { "category": "PM", "serviceType": "VehicleInspection", "codeType": "Infomedia", "code": "CVI", "description": "Carry out complimentary vehicle inspection" }, "comments": [ { "body": "Rattling in engine around 40 kph", "authorRole": "guest" } ], "notes": [ { "body": "Rattling inspected", "authorRole": "serviceAdvisor" } ] } ] } ]';
 
-            repairOrderHistories = (List<VehicleServiceHistoryController.RepairOrderHistory>)json.deserialize(jsonInputString, List<VehicleServiceHistoryController.RepairOrderHistory>.class);
+            repairOrderBookings = (List<VehicleBookingHistoryController.RepairOrderBooking>)json.deserialize(jsonInputString, List<VehicleBookingHistoryController.RepairOrderBooking>.class);
 
             System.debug('############# setROBMock ############');
-            System.debug(JSON.serialize(repairOrderHistories));
+            System.debug(JSON.serialize(repairOrderBookings));
 
         }catch(Exception e){
             System.debug('Error in conversion '+e.getCause()+' '+e.getLineNumber()+' '+e.getMessage()+' '+e.getStackTraceString()+' '+e.getTypeName());
@@ -258,88 +259,88 @@ public with sharing class VehicleServiceHistoryController {
 
     public class JobBooking {
 
-    public String jobNumber {get; set;}
-    public ServiceOperation serviceOperation {get; set;}
-    public Boolean isExpressMaintenance {get; set;}
-    public List<Comment> comments {get; set;}
-    public List<Note> notes {get; set;}
+        public String jobNumber {get; set;}
+        public ServiceOperation serviceOperation {get; set;}
+        public Boolean isExpressMaintenance {get; set;}
+        public List<Comment> comments {get; set;}
+        public List<Note> notes {get; set;}
 
     }
 
     public class Guest {
 
-    public String firstName {get; set;}
-    public String lastName {get; set;}
-    public String mobileNumber {get; set;}
-    public String homePhone {get; set;}
-    public String businessPhone {get; set;}
-    public String email {get; set;}
-    public String relationship {get; set;}
-    public String dmsCustId {get; set;}
-    public Address address {get; set;}
+        public String firstName {get; set;}
+        public String lastName {get; set;}
+        public String mobileNumber {get; set;}
+        public String homePhone {get; set;}
+        public String businessPhone {get; set;}
+        public String email {get; set;}
+        public String relationship {get; set;}
+        public String dmsCustId {get; set;}
+        public Address address {get; set;}
 
     }
 
     public class Address {
 
-    public String street1 {get; set;}
-    public String street2 {get; set;}
-    public String suburb {get; set;}
-    public String state {get; set;}
-    public String postcode {get; set;}
+        public String street1 {get; set;}
+        public String street2 {get; set;}
+        public String suburb {get; set;}
+        public String state {get; set;}
+        public String postcode {get; set;}
 
 
     }
 
     public class Vehicle {
 
-    public String VIN {get; set;}
-    public String registration {get; set;}
-    public String registrationState {get; set;}
-    public String mileage {get; set;}
+        public String VIN {get; set;}
+        public String registration {get; set;}
+        public String registrationState {get; set;}
+        public String mileage {get; set;}
 
     }
 
     public class Inclusion {
 
-    public String description {get; set;}
-    public String inclusionNumber {get; set;}
+        public String description {get; set;}
+        public String inclusionNumber {get; set;}
 
     }
 
     public class Part{
 
-    public String partNumber {get; set;}
-    public String displayName {get; set;}
-    public String quantity {get; set;}
+        public String partNumber {get; set;}
+        public String displayName {get; set;}
+        public String quantity {get; set;}
 
     }
 
     public class Sundry{
 
-    public String displayName {get; set;}
-    public String quantity {get; set;}
+        public String displayName {get; set;}
+        public String quantity {get; set;}
 
     }
 
     public class Booking{
 
-    public String bookingReference {get; set;}
-    public String BookingSrc {get; set;}
-    public String transportOption {get; set;}
+        public String bookingReference {get; set;}
+        public String BookingSrc {get; set;}
+        public String transportOption {get; set;}
 
 
     }
 
     public class Location{
 
-    public String tmcDealerCode {get; set;}
-    public String dealerName {get; set;}
-    public String tmcBranchCode {get; set;}
-    public String branchName {get; set;}
-    public String department {get; set;}
-    public String dmsVendor {get; set;}
-    public String dms {get; set;}
+        public String tmcDealerCode {get; set;}
+        public String dealerName {get; set;}
+        public String tmcBranchCode {get; set;}
+        public String branchName {get; set;}
+        public String department {get; set;}
+        public String dmsVendor {get; set;}
+        public String dms {get; set;}
 
 
     }
@@ -353,6 +354,4 @@ public with sharing class VehicleServiceHistoryController {
         public String body {get;set;}
         public String authorRole {get;set;}
     }
-
-
 }
