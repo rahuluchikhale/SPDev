@@ -1,6 +1,6 @@
 <!-- *****************************************************************************
  *** CheckVehicleServiceHistory Visualforce Page
- *** Display Service TSA, History and Booking history for vehicle
+ *** Display Service History for vehicle
  *** @Since: 18/02/2019
  *** Copyright: SqwarePeg
  ***************************************************************************** -->
@@ -61,11 +61,16 @@
         function doNothing(){
             return false;
         }
+
+        $('body').on('click.collapse-next.data-api', '[data-toggle=collapse-next]', function() {
+            var $target = $(this).parent().next()
+            $target.data('collapse') ? $target.collapse('toggle') : $target.collapse()
+        });
     </script>
 
     <apex:form id="TheForm" >
         <apex:outputPanel id="SHPanel" >
-            <apex:outputPanel styleClass="grey" rendered="{!showTSA}">
+            <apex:outputPanel styleClass="grey" rendered="{!showServiceHistoryFlag}" >
                 <apex:pageMessages />
                 <apex:pageBlock id="block1" mode="maindetail">
 
@@ -107,7 +112,7 @@
                                             <tbody>
                                             <apex:repeat value="{!roh.jobs}" var="job" >
 
-                                                <tr  data-toggle="collapse" data-target="#accordian" class="clickable panel-title table-row CellWithComment accordion" title="Click to get details" >
+                                                <tr  data-toggle="collapse" data-target="#{!job.jobNumber}" class="clickable panel-title table-row CellWithComment accordion" title="Click to get details" >
 
                                                     <td>
                                                         <span data-toggle="tooltip" title="Tooltip Message">{!roh.workshopEndDateTime}</span>
@@ -120,7 +125,7 @@
                                                         </span>
                                                     </td>
                                                     <td>
-                                                        <div data-toggle="collapse" data-target="#accordian" class="clickable panel-title table-row CellWithComment accordion" title="Click to get details">
+                                                        <div data-toggle="collapse" data-target="#{!roh.repairOrderNumber}" class="clickable panel-title table-row CellWithComment accordion" title="Click to get details">
                                                             <a class="card-title">
                                                                 View details
                                                             </a>
@@ -129,7 +134,7 @@
                                                 </tr>
                                                 <tr>
                                                     <td colspan="5">
-                                                        <div id="accordian" class="collapse">
+                                                        <div id="{!roh.repairOrderNumber}" class="collapse">
 
                                                             <!-- Sundries -->
                                                             <h4>Sundries</h4>
@@ -249,7 +254,7 @@
                 </apex:pageBlock>
             </apex:outputPanel>
         </apex:outputPanel>
-        <apex:actionFunction name="RunSave" action="{!SHowTSAService}" reRender="SHPanel"
+        <apex:actionFunction name="RunSave" action="{!ShowServiceHistory}" reRender="SHPanel"
                              oncomplete="RedirectOnSuccess('Lookup Vehicle Service History');"
                              status="otherSaveStatus"/>
 

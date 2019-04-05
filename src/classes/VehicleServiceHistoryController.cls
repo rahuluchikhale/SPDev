@@ -9,13 +9,13 @@ public with sharing class VehicleServiceHistoryController {
 
     public  static Vehicle__c vehicle { get; set; }
 
-    @TestVisible public  static SP_ServiceTSAWrapper wrapper { get; set; }
+    @TestVisible public  static RepairOrderHistory wrapper { get; set; }
 
     static Map<String, Anypoint_Mapping__c > mapAnypointMappings = Anypoint_Mapping__c.getAll();
 
     static AnypointResponse responseany = new AnypointResponse();
 
-    public static boolean showTSA {get; set;}
+    public static boolean showServiceHistoryFlag {get; set;}
 
     public static date RDR_Date {get; set;}
 
@@ -23,19 +23,19 @@ public with sharing class VehicleServiceHistoryController {
     @TestVisible public static List<RepairOrderHistory> repairOrderHistories {get; set;}
 
 
-            public VehicleServiceHistoryController(ApexPages.StandardController con) {
+            public VehicleServiceHistoryController(ApexPages.StandardController con){
 
-        showTSA = false ;
+                showServiceHistoryFlag = false ;
         RDR_Date = null ;
-        system.debug('showTSA valjue is' + showTSA);
+        system.debug('showTSA valjue is' + showServiceHistoryFlag);
 
     }
 
-    public static void SHowTSAService() {
+    public static void ShowServiceHistory() {
 
         system.debug('Inside SHowTSAService');
 
-        showTSA = true ;
+        showServiceHistoryFlag = true ;
 
         system.debug('TSA is true');
 
@@ -44,17 +44,19 @@ public with sharing class VehicleServiceHistoryController {
             vehicle = [ SELECT Id, Name, RDR_Date__c FROM Vehicle__c WHERE Id =: vId ];
         }
         system.debug('Vanme is ' + vehicle.Name);
-        if(showTSA) {
+        if(showServiceHistoryFlag) {
 
             RDR_Date = vehicle.RDR_Date__c ;
 
             HttpResponse    httpResponse;
-            //httpResponse = sendHTTPRequest(vehicle.Name); call commented
+            // TO DO: Using mock Vehicle Name: CONSABC007
+            // replace with vehicle.Name
+            httpResponse = sendHTTPRequest('CONSABC007');
 
 
             // TO DO: remove after API is up
             //setting repairOrderBookings from mock json
-            setROBMock();
+            //setROBMock();
         }
 
     }
@@ -71,13 +73,13 @@ public with sharing class VehicleServiceHistoryController {
 
     public static HttpResponse sendHTTPRequest(String VehicleNo)
     {
-        System.debug('############# Entry: SP_Anypoint_Integration.sendHTTPRequest ############');
+        System.debug('############# Entry: VehicleServiceHistoryController.sendHTTPRequest ############');
 
         Http            http;
         HttpRequest     httpRequest;
         HttpResponse    httpResponse;
         system.debug('custom setting end point is' + SPCacheCMMetadata.getAnypointEndpoint());
-        String endpoint = SPCacheCMMetadata.getAnypointEndpoint()+'/'+VehicleNo+'/servicebook'; // TO DO: remove after api is up
+        String endpoint = SPCacheCMMetadata.getServiceHistoryEndPoint()+'?VIN='+VehicleNo; // TO DO: remove after api is up
         //String endpoint = 'https://api-uat.toyota.com.au/ws/rest/service-history/nsd/bookings?VIN'+VehicleNo; new
         system.debug('end point is ' + endpoint);
         //SP_ServiceTSAWrapper1 wrapper = new SP_ServiceTSAWrapper1();
@@ -89,11 +91,23 @@ public with sharing class VehicleServiceHistoryController {
             httpRequest = new HttpRequest();
             httpRequest.setMethod('GET');
             httpRequest.setHeader('Content-type', 'application/json');
-            httpRequest.setHeader('client_id', mapAnypointMappings.get('client_id').Anypoint_Field__c);
-            httpRequest.setHeader('client_secret', mapAnypointMappings.get('client_secret').Anypoint_Field__c);
+            /*httpRequest.setHeader('client_id', mapAnypointMappings.get('client_id').Anypoint_Field__c);
+            httpRequest.setHeader('client_secret', mapAnypointMappings.get('client_secret').Anypoint_Field__c);*/
             httpRequest.setHeader('VIN', VehicleNo );
             httpRequest.setEndpoint(endPoint);
             httpRequest.setTimeout(60000);
+
+            // basic auth setting
+
+
+            Blob headerValue = Blob.valueOf(SPCacheCMMetadata.getServiceHistoryUsername() + ':' + SPCacheCMMetadata.getServiceHistoryPassword());
+
+            String authorizationHeader = 'BASIC ' + EncodingUtil.base64Encode(headerValue);
+
+            httpRequest.setHeader('Authorization', authorizationHeader);
+
+            //httpRequest.setHeader('VIN', VehicleNo );
+
 
             System.debug('############# Sending Request : '+httpRequest);
             httpResponse response = http.send(httpRequest);
@@ -116,12 +130,9 @@ public with sharing class VehicleServiceHistoryController {
             }
 
             else{
-                string Jstring = response.getBody().replace('"date":', '"date_x":');
-                wrapper = (SP_ServiceTSAWrapper) JSON.deserializeStrict(Jstring, SP_ServiceTSAWrapper.class);
-                system.debug('service keys is ' + wrapper.operations);
-                //system.debug('service keys is ' + wrapper1.ServiceKeys);
+                string rspstring = response.getBody();
+                repairOrderHistories = (List<VehicleServiceHistoryController.RepairOrderHistory>)json.deserialize(rspstring, List<VehicleServiceHistoryController.RepairOrderHistory>.class);
                 System.debug('############# SUCCEDED Response : '+response);
-
                 return response;
 
             }
@@ -131,15 +142,9 @@ public with sharing class VehicleServiceHistoryController {
         catch(CalloutException e)
         {
             System.debug('############# CalloutException = '+e.getMessage());
-            System.debug('############# Exit: SP_Anypoint_Integration.sendHTTPRequest ############');
+            System.debug('############# Exit: VehicleServiceHistoryController.sendHTTPRequest ############');
 
-            throw e;
-        }
-
-        catch(Exception e)
-        {
-            System.debug('############# Exception = '+e.getMessage());
-            System.debug('############# Exit: SP_Anypoint_Integration.sendHTTPRequest ############');
+            System.debug('VehicleServiceHistoryController failed: '+e.getLineNumber()+' '+e.getCause()+' '+e.getMessage()+' '+e.getTypeName()+' '+e.getCause()+' '+e.getStackTraceString() );
 
             throw e;
         }
@@ -176,7 +181,7 @@ public with sharing class VehicleServiceHistoryController {
 
     // Inner class to hold Anypoint response
 
-    @TestVisible public class SP_ServiceTSAWrapper {
+    @TestVisible public class ServiceHistoryWrapper {
 
         public String           serviceCode   {get; set;}
         public String           serviceType   {get; set;}

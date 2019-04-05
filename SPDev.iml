@@ -1155,6 +1155,14 @@
                             <option name="name" value="MappingUtility" />
                             <option name="selected" value="true" />
                           </MetadataEntry>
+                          <MetadataEntry>
+                            <option name="name" value="VehicleBookingHistoryController" />
+                            <option name="selected" value="true" />
+                          </MetadataEntry>
+                          <MetadataEntry>
+                            <option name="name" value="EmailPreprocessor" />
+                            <option name="selected" value="true" />
+                          </MetadataEntry>
                         </list>
                       </option>
                       <option name="name" value="ApexClass" />
@@ -1503,6 +1511,10 @@
                           </MetadataEntry>
                           <MetadataEntry>
                             <option name="name" value="CheckVehicleServiceHistory" />
+                            <option name="selected" value="true" />
+                          </MetadataEntry>
+                          <MetadataEntry>
+                            <option name="name" value="CheckVehicleBookingHistory" />
                             <option name="selected" value="true" />
                           </MetadataEntry>
                         </list>
@@ -11343,6 +11355,7 @@
                           </MetadataEntry>
                           <MetadataEntry>
                             <option name="name" value="MyToyota_ESB_Mapping__c" />
+                            <option name="selected" value="true" />
                           </MetadataEntry>
                           <MetadataEntry>
                             <option name="name" value="NetworkMember" />
